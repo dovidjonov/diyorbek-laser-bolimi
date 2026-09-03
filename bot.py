@@ -17,7 +17,7 @@ from reportlab.lib import colors
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Flask(name)
+app = Flask(__name__)
 
 # Environment Variable orqali olinadigan o'zgaruvchilar
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
