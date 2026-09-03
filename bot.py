@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 from flask import Flask, render_template_string, send_from_directory
 from telegram import Update, InputFile
-from telegram.ext import Application, CommandHandler, ContextTypes, WebAppDataHandler
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # ReportLab kutubxonasi (PDF jadval yaratish)
@@ -149,7 +149,9 @@ async def web_app_data_handler(update: Update, context: ContextTypes.DEFAULT_TYP
 def main():
     application = Application.builder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler("start", start_command))
-    application.add_handler(WebAppDataHandler(web_app_data_handler))
+    
+    # WebApp data qabul qiluvchi handler yangilandi:
+    application.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, web_app_data_handler))
 
     # Avto-hisobot (Har kuni soat 20:00 da)
     scheduler = BackgroundScheduler()
