@@ -1,472 +1,122 @@
-﻿[03.09.2026 15:03] Diyorbek: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AROM - Laser Data Center</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-card: #1e293b;
-            --bg-accent: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --accent-red: #ef4444;
-            --accent-amber: #f59e0b;
-            --border-color: #334155;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            padding: 12px;
-            padding-bottom: 80px;
-        }
-
-        /* 15 SONIYALIK SPLASH SCREEN */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0f172a;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            text-align: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .splash-img-container {
-            width: 100%;
-            max-width: 320px;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            border: 2px solid var(--border-color);
-            margin-bottom: 24px;
-        }
-
-        .splash-img-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .splash-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-        }
-
-        .splash-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-
-        .progress-container {
-            width: 100%;
-            max-width: 280px;
-            height: 8px;
-            background-color: var(--bg-accent);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #10b981);
-            border-radius: 10px;
-            transition: width 1s linear;
-        }
-
-        .timer-text {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--accent-amber);
-        }
-
-        /* ASOSIY CONTENT */
-        #main-app-content {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header h1 {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .status-badge {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--accent-green);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .status-pulse {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-green);
-        }
-
-        .nav-tabs {
-            display: flex;
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 16px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px 4px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-
-        .tab-btn.active {
-            background-color: var(--accent-blue);
-            color: white;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .stat-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px;
-        }
-
-        .stat-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px; }
-        .stat-value { font-size: 1.25rem; font-weight: 700; }
-
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
-
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary { background-color: var(--accent-blue); color: white; }
-        .btn-success { background-color: var(--accent-green); color: white; }
-        .btn-amber { background-color: var(--accent-amber); color: #1e293b; }
-
-        .parts-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .part-select-btn {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 12px;
-            text-align: left;
-            color: var(--text-primary);
-            cursor: pointer;
-        }
-
-        .part-select-btn.selected {
-            border-color: var(--accent-blue);
-            background-color: rgba(59, 130, 246, 0.15);
-        }
-
-        .part-title { font-size: 0.85rem; font-weight: 600; }
-        .part-norma { font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px; }
-
-        .lock-screen { text-align: center; padding: 30px 10px; }
-        .lock-icon { font-size: 3rem; margin-bottom: 12px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>AROM Enterprise — Laser Data Center</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #0f172a;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
 
-    <!-- 15 SONIYALIK SPLASH SCREEN -->
-    <div id="splash-screen">
-        <div class="splash-img-container">
-            <img src="IMG_20260903_124949_586.jpg" alt="AROM">
-[03.09.2026 15:03] Diyorbek: </div>
-        <div class="splash-title">AROM Enterprise</div>
-        <div class="splash-subtitle">Laser Cutting Data Center yuklanmoqda...</div>
-        
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <div class="timer-text">Tizim tayyorlanmoqda: <span id="timerCount">15</span> sek</div>
+  <!-- SPLASH SCREEN (15 SONIYA) -->
+  <div id="splash" class="splash-screen">
+    <div class="w-full max-w-sm bg-slate-800 rounded-2xl p-4 border border-slate-700 shadow-2xl text-center">
+      <img src="IMG_20260903_124949_586.jpg" alt="AROM Swing" class="w-full h-auto rounded-xl object-cover mb-4 border border-slate-700">
+      <h2 class="text-xl font-bold text-white mb-1">AROM Enterprise</h2>
+      <p class="text-xs text-slate-400 mb-4">Laser Cutting Data Center yuklanmoqda...</p>
+      
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-700 rounded-full h-2 mb-3 overflow-hidden">
+        <div id="progress-bar" class="bg-amber-500 h-2 rounded-full transition-all duration-1000 ease-linear" style="width: 0%"></div>
+      </div>
+      <p id="timer-text" class="text-xs font-semibold text-amber-400">Tizim tayyorlanmoqda: 15 sek</p>
+    </div>
+  </div>
+
+  <!-- ASOSIY MINI APP BO'LIMI -->
+  <div id="main-app" class="hidden p-4 max-w-md mx-auto">
+    <div class="text-center my-4">
+      <h1 class="text-2xl font-black text-amber-500">⚙️ AROM LASER DATA CENTER</h1>
+      <p class="text-xs text-slate-400 mt-1">TruLaser / Tube Laser Ishlab Chiqarish Boshqaruvi</p>
     </div>
 
-    <!-- MAIN APP CONTENT -->
-    <div id="main-app-content">
-        <div class="header">
-            <h1>⚙️ Laser Data Center</h1>
-            <div class="status-badge"><div class="status-pulse"></div> ONLINE</div>
-        </div>
+    <!-- TUGMALAR BLOKI -->
+    <div class="space-y-3 mt-6">
+      <button onclick="sendReport('today')" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+        <span>📊 Kunlik Hisobotni Guruhga Yuborish</span>
+      </button>
 
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
-            <button class="tab-btn" onclick="switchTab('cutting')">🔴 Kesuv</button>
-            <button class="tab-btn" onclick="switchTab('reports')">📄 Hisobot</button>
-            <button class="tab-btn" onclick="switchTab('archive')">📚 Arxiv</button>
-        </div>
+      <button onclick="sendReport('week')" class="w-full bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-xl shadow transition active:scale-95 flex items-center justify-center gap-2">
+        <span>📅 Haftalik Hisobot</span>
+      </button>
 
-        <!-- TAB 1: DASHBOARD -->
-        <div id="tab-dashboard" class="tab-content active">
-            <div class="grid-2">
-                <div class="stat-card">
-                    <div class="stat-label">Bugungi Kesuv</div>
-                    <div class="stat-value">1,240 dona</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Tayyor Komplekt</div>
-                    <div class="stat-value" style="color: var(--accent-green);">120 ta</div>
-                </div>
-            </div>
-            <div class="card">
-                <div style="font-size:0.9rem; font-weight:600; margin-bottom:12px;">📊 Kesuv Ko'rsatkichlari</div>
-                <canvas id="dashboardChart" height="200"></canvas>
-            </div>
-        </div>
+      <button onclick="sendReport('month')" class="w-full bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-xl shadow transition active:scale-95 flex items-center justify-center gap-2">
+        <span>🗓 Oylik Hisobot</span>
+      </button>
 
-        <!-- TAB 2: LASER KESUV (PAROLLI) -->
-        <div id="tab-cutting" class="tab-content">
-            <div id="cutting-lock" class="card lock-screen">
-                <div class="lock-icon">🔒</div>
-                <h3>Bo'lim Himoyalangan</h3>
-                <p style="font-size:0.8rem; color:var(--text-secondary); margin:12px 0;">Kirish uchun parolni kiriting:</p>
-                <div class="form-group">
-                    <input type="password" id="laserPassInput" class="form-control" placeholder="Parol..." style="text-align:center;">
-                </div>
-                <button class="btn btn-primary" onclick="unlockLaserSection()">🔓 Kirish</button>
-            </div>
+      <button onclick="sendReport('6months')" class="w-full bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-xl shadow transition active:scale-95 flex items-center justify-center gap-2">
+        <span>📈 6 Oylik Hisobot</span>
+      </button>
 
-            <div id="cutting-content" style="display:none;">
-                <div class="card">
-                    <div style="font-size:0.9rem; font-weight:600; margin-bottom:12px;">⚙️ Detalni Tanlang</div>
-                    <div class="parts-grid" id="partsGrid"></div>
-
-                    <div class="form-group">
-                        <label>Usta Ismi:</label>
-                        <input type="text" id="workerNameInput" class="form-control" placeholder="Ismingiz...">
-                    </div>
-                    <div class="form-group">
-                        <label>Kesilgan Soni:</label>
-                        <input type="number" id="partQtyInput" class="form-control" placeholder="Miqdor...">
-                    </div>
-                    <button class="btn btn-success" onclick="submitPartEntry()">✅ Bazaga Saqlash</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: HISOBOTLAR (PDF YUBORISH) -->
-        <div id="tab-reports" class="tab-content">
-            <div class="card">
-                <div style="font-size:0.9rem; font-weight:600; margin-bottom:12px;">📄 PDF Hisobotlarni Guruhga Yuborish</div>
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    <button class="btn btn-primary" onclick="requestReport('today')">📅 Kunlik Hisobot Yuborish</button>
-                    <button class="btn btn-amber" onclick="requestReport('week')">🗓 Haftalik Hisobot Yuborish</button>
-                    <button class="btn btn-primary" onclick="requestReport('month')">📈 Oylik Hisobot Yuborish</button>
-                    <button class="btn btn-amber" onclick="requestReport('6months')">📊 6 Oylik Hisobot Yuborish</button>
-                    <button class="btn btn-success" onclick="requestReport('year')">📋 1 Yillik Hisobot Yuborish</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: ARXIV -->
-        <div id="tab-archive" class="tab-content">
-            <div class="card">
-                <div style="font-size:0.9rem; font-weight:600; margin-bottom:12px;">🔍 Sana bo'yicha Qidiruv</div>
-                <div style="display:flex; gap:8px;">
-                    <input type="date" id="archiveDateInput" class="form-control">
-                    <button class="btn btn-primary" style="width:auto; padding:0 16px;">🔍</button>
-                </div>
-            </div>
-        </div>
+      <button onclick="sendReport('year')" class="w-full bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-xl shadow transition active:scale-95 flex items-center justify-center gap-2">
+        <span>📋 1 Yillik Hisobot</span>
+      </button>
     </div>
 
-    <script>
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) tg.expand();
+    <div class="mt-8 text-center border-t border-slate-800 pt-4">
+      <p class="text-[10px] text-slate-500">AROM Enterprise © 2026 | Barcha huquqlar himoyalangan</p>
+    </div>
+  </div>
 
-        // 15 SONIYALIK TAYMER
-        let timeLeft = 15;
-        const totalTime = 15;
-        const timerElement = document.getElementById('timerCount');
-        const progressBar = document.getElementById('progressBar');
-        const splashScreen = document.getElementById('splash-screen');
-        const mainContent = document.getElementById('main-app-content');
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.expand();
+      tg.ready();
+    }
 
-        const countdown = setInterval(() => {
-            timeLeft--;
-            timerElement.textContent = timeLeft;
-            progressBar.style.width = (((totalTime - timeLeft) / totalTime) * 100) + '%';
+    let timeLeft = 15;
+    const progressBar = document.getElementById('progress-bar');
+    const timerText = document.getElementById('timer-text');
+    const splash = document.getElementById('splash');
+    const mainApp = document.getElementById('main-app');
 
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                splashScreen.style.opacity = '0';
-                splashScreen.style.visibility = 'hidden';
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    mainContent.style.display = 'block';
-                    setTimeout(() => {
-                        mainContent.style.opacity = '1';
-                        renderChart();
-                    }, 50);
-                }, 500);
-            }
-        }, 1000);
+    const countdown = setInterval(() => {
+      timeLeft--;
+      const percentage = ((15 - timeLeft) / 15) * 100;
+      progressBar.style.width = percentage + '%';
+      timerText.innerText = Tizim tayyorlanmoqda: ${timeLeft} sek;
 
-        const BOM = {
-            "Kalla": 1, "Oyoq": 4, "Kalla kichgina": 2, "Qol": 2, "Qol tagi": 2,
-            "Sdina T": 1, "Sdina": 1, "Sdina tagi": 2, "Kashak katta": 1, "Kashak kichgina": 2,
-            "20 lik truba": 2, "13 lik truba": 3, "Zontik": 2, "Zontik tagi": 2, "Ilgich": 4
-        };
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        splash.style.display = 'none';
+        mainApp.classList.remove('hidden');
+      }
+    }, 1000);
 
-        let selectedPart = null;
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('tab-' + tabId).classList.add('active');
-        }
-
-        function initPartsGrid() {
-            const grid = document.getElementById('partsGrid');
-            grid.innerHTML = '';
-            Object.keys(BOM).forEach(part => {
-                const btn = document.createElement('div');
-                btn.className = 'part-select-btn';
-                btn.innerHTML = <div class="part-title">⚙️ ${part}</div><div class="part-norma">Norma: ${BOM[part]} ta</div>;
-                btn.onclick = () => {
-                    document.querySelectorAll('.part-select-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    selectedPart = part;
-                };
-                grid.appendChild(btn);
-            });
-        }
-        initPartsGrid();
-
-        function unlockLaserSection() {
-            if (document.getElementById('laserPassInput').value === "1234") {
-                document.getElementById('cutting-lock').style.display = 'none';
-                document.getElementById('cutting-content').style.display = 'block';
-            } else {
-                alert("❌ Parol noto'g'ri!");
-            }
-        }
-[03.09.2026 15:03] Diyorbek: function submitPartEntry() {
-            const worker = document.getElementById('workerNameInput').value;
-            const qty = document.getElementById('partQtyInput').value;
-            if (!selectedPart  !worker  !qty) return alert("Barcha maydonlarni to'ldiring!");
-            
-            const payload = { action: "add_part", worker, part: selectedPart, qty };
-            if (tg) tg.sendData(JSON.stringify(payload));
-            else alert("✅ Saqlandi!");
-        }
-
-        function requestReport(period) {
-            if (tg) tg.sendData(JSON.stringify({ action: "generate_report_pdf", period }));
-            else alert(${period} hisoboti so'raldi!);
-        }
-
-        function renderChart() {
-            const ctx = document.getElementById('dashboardChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Kalla', 'Oyoq', 'Qol', 'Sdina T', 'Zontik'],
-                    datasets: [{ label: 'Kesilgan', data: [120, 480, 240, 120, 240], backgroundColor: '#3b82f6' }]
-                },
-                options: { responsive: true, plugins: { legend: { display: false } } }
-            });
-        }
-    </script>
+    function sendReport(period) {
+      const payload = {
+        action: 'generate_report_pdf',
+        period: period
+      };
+      if (tg) {
+        tg.sendData(JSON.stringify(payload));
+      } else {
+        alert("Telegram WebApp muhiti topilmadi!");
+      }
+    }
+  </script>
 </body>
 </html>
